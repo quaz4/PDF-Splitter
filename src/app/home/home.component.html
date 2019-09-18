@@ -1,0 +1,4 @@
+<mat-toolbar>
+  <button *ngIf="!filePath" mat-raised-button (click)="loadFile()">Load PDF</button>
+  <button *ngIf="filePath" mat-raised-button (click)="loadFile()" color="warn">Cancel</button>
+</mat-toolbar>
