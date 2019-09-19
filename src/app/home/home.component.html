@@ -1,4 +1,27 @@
 <mat-toolbar>
   <button *ngIf="!filePath" mat-raised-button (click)="loadFile()">Load PDF</button>
-  <button *ngIf="filePath" mat-raised-button (click)="loadFile()" color="warn">Cancel</button>
+
+  <button *ngIf="filePath" mat-raised-button (click)="clearFile()" color="warn">Cancel</button>
+  <span style="width: 10px;"></span>
+  <button *ngIf="filePath && !splitState" mat-raised-button (click)="split()" color="accent">Split</button>
+
+  <span class="spacer"></span>
+
+  <mat-form-field *ngIf="splitState">
+      <input matInput [(ngModel)]="name" #ctrl="ngModel">
+      <span matSuffix>.pdf</span>
+  </mat-form-field>
+
+  <button class="next" *ngIf="splitState" mat-raised-button (click)="nextSplit()" color="accent">Save & Continue</button>
 </mat-toolbar>
+
+
+<div class="pdf">
+  <ng2-pdfjs-viewer #pdfViewerAutoLoad
+    [download]="false"
+    [openFile]="false"
+    [viewBookmark]="false"
+    [download]="false"
+    [print]="false">
+  </ng2-pdfjs-viewer>
+</div>

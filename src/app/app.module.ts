@@ -20,6 +20,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HomeModule } from './home/home.module';
 
 import { AppComponent } from './app.component';
+import { SplitDialog } from './shared/components/split-dialog/split-dialog.component';
+// import { SplitDialogComponent } from './shared/components/split-dialog/split-dialog.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -27,6 +29,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
+  // declarations: [AppComponent, SplitDialogComponent],
+  entryComponents: [SplitDialog],
   declarations: [AppComponent],
   imports: [
     BrowserModule,

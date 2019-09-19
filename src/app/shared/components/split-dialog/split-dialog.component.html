@@ -1,0 +1,26 @@
+<h1 mat-dialog-title>Split</h1>
+<div mat-dialog-content>
+    <p>How many pages would you like each PDF to be?</p>
+    <mat-form-field>
+        <input min="1" type="number" matInput [(ngModel)]="data.split">
+    </mat-form-field>
+
+    <p>Do you want to name each PDF as you go?</p>
+    <mat-slide-toggle
+        [(ngModel)]="data.doNaming">
+    </mat-slide-toggle>
+
+    <p *ngIf="!data.doNaming">What do you want the files to be named?</p>
+    <mat-form-field *ngIf="!data.doNaming">
+        <input matInput [(ngModel)]="data.name">
+        <span matSuffix>.pdf</span>
+    </mat-form-field>
+
+    <p>Where do you want to save them?</p>
+    <button mat-raised-button (click)="selectDirectory()" color="accent">Save Location</button>
+    <p>{{data.directory}}</p>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="data" [disabled]="disableButton()" cdkFocusInitial>Ok</button>
+</div>
