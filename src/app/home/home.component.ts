@@ -14,12 +14,15 @@ import { PDFDocument, values } from 'pdf-lib';
 
 export class HomeComponent implements OnInit {
   @ViewChild('pdfViewerAutoLoad', {static: true}) pdfViewerAutoLoad;
-  
-  public filePath = "";
+
+  public filePath = '';
   public buffer: Buffer = null;
 
   public splitState: SplitState = null;
-  public name: string = "";
+  public name = '';
+
+  public zoom = 'page-fit';
+  public page = 0;
 
   constructor(public matDialog: MatDialog) {
   }
@@ -44,7 +47,7 @@ export class HomeComponent implements OnInit {
   }
 
   clearFile() {
-    this.filePath = "";
+    this.filePath = '';
     this.buffer = null;
     this.pdfViewerAutoLoad.pdfSrc = this.buffer;
     this.pdfViewerAutoLoad.refresh();
@@ -60,18 +63,17 @@ export class HomeComponent implements OnInit {
   split() {
     const dialogRef = this.matDialog.open(SplitDialog, {
       width: '250px',
-      data: { split: 1, name: "SplitDocument", directory: "", doNaming: "true" }
+      data: { split: 1, name: 'SplitDocument', directory: '', doNaming: 'true' }
     });
 
     dialogRef.afterClosed().subscribe(async (result) => {
       console.log('The dialog was closed');
-      // this.animal = result;
       console.log(result);
 
       // Stop if result is falsy
       if (!result) { return; }
 
-      let splitState = new SplitState();
+      const splitState = new SplitState();
       splitState.directory = result.directory;
       splitState.pages = await this.getPdfPageCount(this.buffer);
       splitState.split = result.split;
@@ -82,15 +84,15 @@ export class HomeComponent implements OnInit {
       splitState.pdfs = [];
       this.splitState = splitState;
 
-      let temp = await this.getPdfPages(this.buffer, this.splitState.start, this.splitState.end);
+      const temp = await this.getPdfPages(this.buffer, this.splitState.start, this.splitState.end);
       this.pdfViewerAutoLoad.pdfSrc = temp;
       this.pdfViewerAutoLoad.refresh();
 
       this.splitState.pdfs.push(temp);
 
-      if (this.splitState.doNaming == false) {
+      if (this.splitState.doNaming === false) {
         let done = false;
-        
+
         while (!done) {
           done = await this.nextSplit();
         }
@@ -103,7 +105,7 @@ export class HomeComponent implements OnInit {
   }
 
   async nextSplit() {
-    console.log("Split end " + this.splitState.end);
+    console.log('Split end ' + this.splitState.end);
     if (!this.name && this.splitState.doNaming) { return; }
 
     if (!this.splitState.doNaming) {
@@ -112,13 +114,24 @@ export class HomeComponent implements OnInit {
 
     this.saveFile(this.splitState.directory, this.name, this.splitState.pdfs[this.splitState.pdfs.length - 1]);
 
-    this.name = "";
+    console.log(this.pdfViewerAutoLoad.PDFViewerApplication.toolbar);
+
+    // If its a number the scale is wrong, for example it needs to be 150 not 1.5
+    if (isNaN(this.pdfViewerAutoLoad.PDFViewerApplication.toolbar.pageScaleValue)) {
+      this.zoom = this.pdfViewerAutoLoad.PDFViewerApplication.toolbar.pageScaleValue;
+    } else {
+      this.zoom = this.pdfViewerAutoLoad.PDFViewerApplication.toolbar.pageScaleValue * 100 + '';
+    }
+
+    this.page = this.pdfViewerAutoLoad.PDFViewerApplication.toolbar.pageNumber;
+
+    this.name = '';
     this.splitState.count++;
 
     let done = false;
 
     // Check if this is the final document
-    if (this.splitState.end == this.splitState.pages - 1) {
+    if (this.splitState.end === this.splitState.pages - 1) {
       done = true;
     }
 
@@ -131,7 +144,7 @@ export class HomeComponent implements OnInit {
       this.splitState.end = this.splitState.pages - 1;
     }
 
-    let temp = await this.getPdfPages(this.buffer, this.splitState.start, this.splitState.end);
+    const temp = await this.getPdfPages(this.buffer, this.splitState.start, this.splitState.end);
     this.pdfViewerAutoLoad.pdfSrc = temp;
     this.pdfViewerAutoLoad.refresh();
 
@@ -162,9 +175,9 @@ export class HomeComponent implements OnInit {
     const splitDoc = await PDFDocument.create();
 
     for (let step = start; step <= end; step++) {
-      console.log("Copying page " + step);
+      console.log('Copying page ' + step);
       const [donorPages] = await splitDoc.copyPages(pdfDoc, [step]);
-      await splitDoc.addPage(donorPages)
+      await splitDoc.addPage(donorPages);
     }
 
     const pdfBytes = await splitDoc.save();
@@ -177,7 +190,7 @@ export class HomeComponent implements OnInit {
   }
 
   saveFile(path: string, name, contents: any) {
-    console.log("Saving PDF");
-    writeFileSync(path + "/" + name + ".pdf", contents);
+    console.log('Saving PDF');
+    writeFileSync(path + '/' + name + '.pdf', contents);
   }
 }

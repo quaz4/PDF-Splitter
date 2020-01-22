@@ -40,7 +40,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     SharedModule,
     HomeModule,
     AppRoutingModule,
-    BrowserAnimationsModule, 
+    BrowserAnimationsModule,
     MatToolbarModule,
     TranslateModule.forRoot({
       loader: {

@@ -8,20 +8,23 @@
   <span class="spacer"></span>
 
   <mat-form-field *ngIf="splitState">
-      <input matInput [(ngModel)]="name" #ctrl="ngModel">
+      <input matInput [(ngModel)]="name" #ctrl="ngModel" (keyup.enter)="nextSplit()">
       <span matSuffix>.pdf</span>
   </mat-form-field>
 
   <button class="next" *ngIf="splitState" mat-raised-button (click)="nextSplit()" color="accent">Save & Continue</button>
 </mat-toolbar>
 
-
 <div class="pdf">
   <ng2-pdfjs-viewer #pdfViewerAutoLoad
+    [zoom]="zoom"
+    [page]="page"
     [download]="false"
     [openFile]="false"
     [viewBookmark]="false"
     [download]="false"
-    [print]="false">
+    [print]="false"
+    [fullScreen]="false"
+  >
   </ng2-pdfjs-viewer>
 </div>
