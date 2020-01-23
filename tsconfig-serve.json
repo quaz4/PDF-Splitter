@@ -1,4 +1,7 @@
 {
+  "angularCompilerOptions": {
+    "disableTypeScriptVersionCheck": true
+  },
   "compilerOptions": {
     "sourceMap": true,
     "declaration": false,
